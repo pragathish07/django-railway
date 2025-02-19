@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
+import { useClerk, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 const Onboarding = () => {
   const { user } = useUser();
+  const { user: clerkUser } = useClerk(); 
   const navigate = useNavigate();
 
   const [selectedOptions, setSelectedOptions] = useState({
@@ -24,8 +25,16 @@ const Onboarding = () => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+
+  useEffect(() => {
+   
+    if (localStorage.getItem("onboarded") === "true") {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,11 +47,13 @@ const Onboarding = () => {
     navigate("/dashboard", { replace: true });
   };
 
+
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-50">
       <div className="w-full max-w-lg p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {user?.organization?.name || "Your Organization"} Onboarding
+          {user?.organization ? `${user.organization.name} Onboarding` : "Onboarding"}
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -63,6 +74,7 @@ const Onboarding = () => {
                 placeholder="API Key"
                 className="w-full p-2 mt-2 bg-gray-200 rounded"
                 onChange={handleInputChange}
+                value={formData.datadogApiKey}
               />
             )}
           </div>
@@ -84,6 +96,7 @@ const Onboarding = () => {
                 placeholder="API Key"
                 className="w-full p-2 mt-2 bg-gray-200 rounded"
                 onChange={handleInputChange}
+                value={formData.newrelicApiKey}
               />
             )}
           </div>
@@ -106,6 +119,7 @@ const Onboarding = () => {
                   placeholder="Access Key"
                   className="w-full p-2 mt-2 bg-gray-200 rounded"
                   onChange={handleInputChange}
+                  value={formData.awsAccessKey}
                 />
                 <input
                   type="password"
@@ -113,6 +127,7 @@ const Onboarding = () => {
                   placeholder="Secret Key"
                   className="w-full p-2 mt-2 bg-gray-200 rounded"
                   onChange={handleInputChange}
+                  value={formData.awsSecretKey}
                 />
               </>
             )}
