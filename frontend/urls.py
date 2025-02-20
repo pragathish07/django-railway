@@ -9,4 +9,5 @@ app_name = "frontend"
 urlpatterns = [
  
     re_path(r"^.*$", frontend, name="frontend"),
+    
 ]

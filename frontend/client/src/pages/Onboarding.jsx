@@ -31,9 +31,11 @@ const Onboarding = () => {
 
   useEffect(() => {
    
+    
     if (localStorage.getItem("onboarded") === "true") {
       navigate("/dashboard");
     }
+    
   }, [navigate]);
 
   const handleSubmit = (e) => {
